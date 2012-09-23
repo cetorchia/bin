@@ -1,0 +1,15 @@
+#!/bin/sh
+
+clean()
+{
+	rm -i "$1"/*~
+}
+
+if [ -z "$1" ]; then
+	clean "."
+fi
+
+while [ -n "$1" ]; do
+	clean "$1"
+	shift
+done

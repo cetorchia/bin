@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if ([ -z "$1" ] || [ -n "$2" ]); then
+	echo "Usage: wifi_up <access point>"
+	exit 1
+fi
+
+ifup wlan0
+iwconfig wlan0 essid "$1"
+dhclient wlan0 -v

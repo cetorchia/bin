@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Disconnect from UVic's secure wifi
+#
+
+dhclient wlan0 -r -v
+killall -q wpa_supplicant wpa_cli

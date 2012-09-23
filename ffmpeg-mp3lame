@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Make convert input files to use libmp3lame as audio codec.
+#
+
+TMP_DIR=~/tmp.ffmpeg-mp3lame
+mkdir "$TMP_DIR"
+
+while [ -n "$1" ]; do
+  FILENAME="$1"
+  BASENAME=`basename "$FILENAME"`
+  OUTPUT="$TMP_DIR/$BASENAME"
+
+  echo ffmpeg -i "$FILENAME" -acodec libmp3lame "$OUTPUT"
+  ffmpeg -i "$FILENAME" -acodec libmp3lame "$OUTPUT"
+
+  echo mv "$OUTPUT" "$FILENAME"
+  mv "$OUTPUT" "$FILENAME"
+
+  shift
+done
+
+rm -rf "$TMP_DIR"

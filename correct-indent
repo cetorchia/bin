@@ -1,0 +1,77 @@
+#!/usr/bin/perl -w
+#
+# Corrects single-space indentation.
+# Input: correct-indent <tab size> <files>
+#
+# (c) 2010 Carlos E. Torchia
+# Licensed under GNU GPL v2 (see fsf.org)
+#
+use strict;
+
+### Get tab size
+(scalar(@ARGV) >= 1 and $ARGV[0] =~ /\d+/) or die("Must provide tab size.");
+my $tabSize = shift(@ARGV);
+
+### Include stdin if ARGV is empty
+push(@ARGV, "-") if(scalar(@ARGV) < 1);
+
+#
+# Process the files
+#
+
+foreach my $file (@ARGV)
+{
+	my @inLines;
+	my @outLines;
+
+	### Get it from STDIN and write it STDOUT
+	if($file eq "-")
+	{
+		@inLines = <STDIN>;
+		@outLines = formatLines($tabSize, @inLines);
+		print STDOUT @outLines;
+	}
+
+	### Get it from the file and write it to the file
+	else
+	{
+		open(fileHandle, "<$file");
+		@inLines = <fileHandle>;
+		@outLines = formatLines($tabSize, @inLines);
+		close(fileHandle);
+
+		open(fileHandle, ">$file");
+		print fileHandle @outLines;
+		close(fileHandle);
+	}
+}
+
+#
+# Corrects the indentation of the lines and returns
+# the result.
+#
+
+sub formatLines
+{
+	my $tabSize = shift;
+
+	my @inLines = @_;
+	my @outLines = ();
+
+	### Generate tab string
+	my $tab = "";
+	$tab = $tab . " " while($tabSize--);
+
+	### Process the lines
+	foreach my $line (@inLines)
+	{
+		### Keep taking the tabs out until there are no more
+		while($line =~ /^\t*$tab/)
+		{
+			$line =~ s/^(\t*)$tab/$1\t/;
+		}
+		push(@outLines, $line);
+	}
+
+	return @outLines;
+}

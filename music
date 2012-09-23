@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# Play music/*.mp3 shuffled
+#
+
+if [ -z "$1" ]; then
+  GENRES="classical being/music"
+else
+  GENRES=$@
+fi
+
+FILES=""
+for x in $GENRES; do
+  FILES="$FILES /home/carlos/$x/*.mp3"
+done
+
+mplayer $FILES -shuffle
+

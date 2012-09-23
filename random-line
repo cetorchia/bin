@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Outputs a random line from the file with filename "$1"
+# (c) 2010 Carlos E. Torchia
+#
+
+#
+# Get filename from args.
+#
+
+if [ -z "$1" ]; then
+	echo "Usage: random-line <filename>"
+	exit 1
+fi
+
+#
+# Get the number of lines
+#
+
+N=$(/home/carlos/bin/count-lines < "$1")
+
+#
+# Generate a random number
+#
+
+let "L=($RANDOM % $N) + 1"
+
+#
+# Give the random line
+#
+
+/home/carlos/bin/line-no $L < "$1"

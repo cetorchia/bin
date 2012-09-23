@@ -1,0 +1,43 @@
+#!/bin/sh
+# Backup various files in home directory
+# @author ctorchia87
+
+function rootname {
+  echo "$1" | perl -ne '/^\/?([^\/]+)/ && print $1'
+}
+
+function backup {
+  BACKUP_DIR="$1"
+  shift
+  if [ -z "$BACKUP_DIR" ]; then
+    echo 'Need backup directory on line 1'
+    echo 'e.g. /backup/yourname'
+    exit 1
+  fi
+
+  HOME_DIR="$1"
+  shift
+  if [ -z "$HOME_DIR" ]; then
+    echo 'Need home directory on line 2'
+    echo 'e.g. /home/yourname'
+    exit 1
+  fi
+
+  cd "$HOME_DIR"
+  echo "In $HOME_DIR"
+
+
+  while [ -n "$1" ]; do
+    DIR_TO_BACKUP="$1"
+    ARCHIVE_NAME=`rootname "$DIR_TO_BACKUP"`
+    ARCHIVE="$BACKUP_DIR/$ARCHIVE_NAME.zip"
+    echo "Backing up $DIR_TO_BACKUP to $ARCHIVE"
+    zip -r -u "$ARCHIVE" $DIR_TO_BACKUP
+    shift
+  done
+}
+
+for INF in ~/etc/*.bak.inf; do
+  echo "Reading $INF"
+  backup $(cat $INF)
+done

@@ -1,0 +1,12 @@
+#!/usr/bin/awk -f
+#
+# linetimes
+# For each input line, print the time it arrived followed by the line 
+# itself
+#
+
+{
+  "date +\"%F %T\"" | getline d
+  print d,$0
+
+}

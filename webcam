@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Command to use mencoder to record from the webcam
+# Saves $1 as an AVI file
+#
+
+if [ -z "$1" ]; then
+	echo 'Usage: webcam <file>.avi' > /dev/stderr
+	exit 1
+fi
+
+#mencoder -tv driver=v4l2:width=320:height=200:forceaudio:adevice=/dev/dsp tv:// -ovc lavc -oac mp3lame -o "$1"
+
+ffmpeg -f oss -i /dev/dsp -f video4linux2 -i /dev/video0 "$1"

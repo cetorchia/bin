@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+#
+# Gets line no ...
+#
+
+if($#ARGV!=0) {
+  print STDERR "line-no: give me a number!\n";
+  exit 1;
+}
+
+if($ARGV[0]<1) {
+  print STDERR "line-no: I need an integer from 1 to MAX_INT\n";
+  exit 1;
+}
+
+$line_no=0;
+while($_=<STDIN>) {
+  $line_no++;
+  if($line_no==$ARGV[0]) {
+    print "$_";
+    exit 0;
+  }
+}
