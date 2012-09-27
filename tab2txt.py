@@ -13,7 +13,6 @@ import sys
 import re
 
 for line in sys.stdin.readlines():
-  line = re.sub(r'^[^\t]+\t', '', line)
   line = line.replace('\\n', '\n')
   line = line.replace('\\\\', '\\')
   print line
