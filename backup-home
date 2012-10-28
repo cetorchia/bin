@@ -37,6 +37,12 @@ function backup {
   done
 }
 
+function bring_etc {
+  if [ -e ~/etc/bring-etc.sh ]; then
+    ~/etc/bring-etc.sh
+  fi
+}
+
 for INF in ~/etc/*.bak.inf; do
   echo "Reading $INF"
   backup $(cat $INF)
