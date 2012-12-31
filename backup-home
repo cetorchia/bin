@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Backup various files in home directory
 # @author ctorchia87
 
@@ -38,7 +38,7 @@ function backup {
 }
 
 function bring_etc {
-  if [ -e ~/etc/bring-etc.sh ]; then
+  if [ -x ~/etc/bring-etc.sh ]; then
     ~/etc/bring-etc.sh
   fi
 }
