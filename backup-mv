@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Move a file within a backup archive
+# (c) 2012 Carlos E. Torchia
+#
+
+# ~/etc/backup.conf must have BACKUP_DIR_ARRAY with redundant directories
+# that have the backup .zip archives.
+
+. ~/etc/backup.conf
+
+function usage {
+	echo "backup-mv <archive> <source> <destination>" >&2
+}
+
+# Get arguments
+if [[ -z "$1" || -z "$2" || -z "$3" || -n "$4" ]]; then
+  usage
+  exit 1
+fi
+ARCHIVE="$1"
+SOURCE="$2"
+DESTINATION="$3"
+
+# Assert dependencies available
+DIRNAME="$(dirname "$DESTINATION")"
+if [[ ! -f "$SOURCE" ]]; then
+	echo "backup-mv: $SOURCE does not exist" >&2
+	exit 1
+elif [[ ! -d "$DIRNAME" ]]; then
+	echo "backup-mv: $DIRNAME does not exist" >&2
+	exit 1
+fi
+
+# Determine the filename that will be re-archived
+if [[ -d "$DESTINATION" ]]; then
+	DESTINATION_NAME="${DIRNAME%/}/$(basename "$DESTINATION")"
+	BACKUP_DESTINATION="$DESTINATION_NAME/$(basename "$SOURCE")"
+else
+	BACKUP_DESTINATION="$DESTINATION"
+fi
+
+# Move the file on the file system
+mv "$SOURCE" "$DESTINATION"
+
+# Move the file in the archive
+for BACKUP_DIR in ${BACKUP_DIR_ARRAY[@]}; do
+	if [[ -d "$BACKUP_DIR" ]]; then
+		BACKUP_ARCHIVE="$BACKUP_DIR/$ARCHIVE.zip"
+		zip -d "$BACKUP_ARCHIVE" "$SOURCE"
+		zip "$BACKUP_ARCHIVE" "$BACKUP_DESTINATION"
+	fi
+done
