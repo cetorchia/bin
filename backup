@@ -1,8 +1,12 @@
 #!/bin/bash
 #
 # Adds files to cumulative backup archive
-# (c) 2010 Carlos E. Torchia
+# (c) 2010-2012 Carlos E. Torchia
 #
+# ~/etc/backup.conf must have BACKUP_DIR_ARRAY as redundant directories
+# with all the backup .zip files.
+
+. ~/etc/backup.conf
 
 #
 # This function prints the usage
@@ -16,48 +20,15 @@ usage()
 }
 
 #
-# Makes a backup of FILES in ARCHIVE in BACKUP_DIR
+# Get arguments
 #
 
-backup()
-{
-	BACKUP_DIR="$1"
-	shift
-	ARCHIVE="$1"
-	shift
-	FILE="$1"
-	shift
-
-	BACKUP_ARCHIVE="$BACKUP_DIR/$ARCHIVE.zip"
-
-	if [ -d "$BACKUP_DIR" ]; then
-		echo "backup: Backing up $FILE to $BACKUP_ARCHIVE"
-		zip -r -u "$BACKUP_ARCHIVE" "$FILE"
-	else
-		echo "backup: $BACKUP_DIR does not exist" > /dev/stderr
-	fi
-}
-
-
-#
-# Get the archive's name
-#
-
-if [ -z "$1" ]; then
+if [[ -z "$1" || -z "$2" ]]; then
   usage
   exit
 fi
 ARCHIVE="$1"
 shift
-
-#
-# Get which files to back up
-#
-
-if [ -z "$1" ]; then
-  usage
-  exit
-fi
 
 #
 # Back up each file one at a time
@@ -68,19 +39,11 @@ while [ -n "$1" ]; do
 	FILE="$1"
 	shift
 
-	#
-	# Backup at location 1, if possible.
-	#
-
-	BACKUP_DIR_1="/media/usb/backup"
-	backup $BACKUP_DIR_1 $ARCHIVE "$FILE"
-
-	#
-	# Backup at location 2, if possible.
-	#
-
-	WHOAMI=`whoami`
-	BACKUP_DIR_2="/backup/$WHOAMI"
-	backup $BACKUP_DIR_2 $ARCHIVE "$FILE"
-
+	for BACKUP_DIR in ${BACKUP_DIR_ARRAY[@]}; do
+		# Backup to this location if possible.
+		if [[ -d "$BACKUP_DIR" ]]; then
+			BACKUP_ARCHIVE="$BACKUP_DIR/$ARCHIVE.zip"
+			zip -r -u "$BACKUP_ARCHIVE" "$FILE"
+		fi
+	done
 done
