@@ -36,14 +36,14 @@ shift
 
 while [ -n "$1" ]; do
 
-	FILE="$1"
-	shift
+FILE="$1"
+shift
 
-	for BACKUP_DIR in ${BACKUP_DIR_ARRAY[@]}; do
-		# Backup to this location if possible.
-		if [[ -d "$BACKUP_DIR" ]]; then
-			BACKUP_ARCHIVE="$BACKUP_DIR/$ARCHIVE.zip"
-			zip -r -u "$BACKUP_ARCHIVE" "$FILE"
-		fi
-	done
+for BACKUP_DIR in ${BACKUP_DIR_ARRAY[@]}; do
+  # Backup to this location if possible.
+  if [[ -d "$BACKUP_DIR" ]]; then
+    BACKUP_ARCHIVE="$BACKUP_DIR/$ARCHIVE.zip"
+    zip -r -u "$BACKUP_ARCHIVE" "$FILE"
+  fi
+  done
 done
