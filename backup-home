@@ -43,6 +43,8 @@ function bring_etc {
   fi
 }
 
+bring_etc
+
 for INF in ~/etc/*.bak.inf; do
   echo "Reading $INF"
   backup $(cat $INF)
