@@ -5,7 +5,7 @@
 #
 
 if [ -z "$1" ]; then
-	echo 'Usage: webcam <file>.avi' > /dev/stderr
+	echo 'Usage: webcam <file>.mpeg' > /dev/stderr
 	exit 1
 fi
 
