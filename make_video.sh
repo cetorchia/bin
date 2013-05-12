@@ -1,28 +1,43 @@
 #!/bin/sh
 # Concatenate jpegs and song as an mpeg
 
-OUT=`basename "$(pwd)"`.mpeg
+OUT=$(basename "$(pwd)").mpeg
+[[ -n "$1" ]] && DURATION=$1 || DURATION=1
+if [[ -n $(echo "$1" | tr -d '[0-9\.]') ]] || [[ -n "$2" ]]; then
+  echo "Usage: $(basename "$0") [DURATION(seconds)]" >&2
+  exit 1
+fi
 
 # Generate soundless MPEGs for each picture
 i=0
-for JPEG in `ls *.jpeg`; do
-  n=`printf "%02d" "$i"`
+ls *.jpeg *.jpg *.JPG *.png | sort | while read INIMG; do
+  n=$(printf "%02d" "$i")
+  OUTIMG=$n.png
   MPEG=$n.mpeg
-  if [ $i -lt 18 ]; then
-    d=6
-  elif [ $i == 18 ]; then
-    d=20
-  else
-    d=10
-  fi
-  if [ ! -f "$MPEG" ]; then
-    ffmpeg -sameq -r 20 -t $d -loop_input -i "$JPEG" "$MPEG"
-  fi
-  let "i=$i+1"
+
+  # Pad to 4:3
+  h=$(convert "$INIMG" -ping -format "%h" info:)
+  w=$((h*4/3))
+  echo -n \"$INIMG\" \-\> \"$OUTIMG\"
+  convert "$INIMG" -gravity center -background black -extent $w\x$h "$OUTIMG"
+  echo
+
+  # Convert image to mpeg
+  echo -n \"$OUTIMG\" \-\> \"$MPEG\"
+  ffmpeg -qscale 2 -r 20 -t $DURATION -loop 1 -i "$OUTIMG" "$MPEG" 2> /dev/null > /dev/null < /dev/null && (
+    rm "$OUTIMG"
+  ) || echo -n \ \[FAILED\]
+  echo
+
+  i=$((i+1))
 done
 
 SONG=$(echo *.mp3)
 
 # Piece them all together and add the soundtrack
-cat ??.mpeg > soundless.mpeg
-ffmpeg -sameq -i soundless.mpeg -i "$SONG" "$OUT"
+( cat ??.mpeg > soundless.mpeg ) && (
+  rm ??.mpeg
+)
+ffmpeg -qscale 2 -i soundless.mpeg -i "$SONG" -target ntsc-dvd -acodec ac3 "$OUT" && (
+  rm soundless.mpeg
+)

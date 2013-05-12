@@ -22,7 +22,7 @@ while [[ -n "$1" ]]; do
   fi
 
   # Convert this file
-  ffmpeg -sameq -i "$INPUT" -target ntsc-dvd "$OUTPUT" >/dev/null 2>/dev/null && (
+  ffmpeg -qscale 2 -i "$INPUT" -target ntsc-dvd -acodec ac3 "$OUTPUT" >/dev/null 2>/dev/null && (
     echo '[success]'
     rm "$INPUT"
   ) || echo '[failed]'
