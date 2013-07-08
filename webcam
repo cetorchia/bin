@@ -11,4 +11,4 @@ fi
 
 #mencoder -tv driver=v4l2:width=320:height=200:forceaudio:adevice=/dev/dsp tv:// -ovc lavc -oac mp3lame -o "$1"
 
-ffmpeg -f pulse -i default -f video4linux2 -i /dev/video0 "$1"
+ffmpeg -f alsa -i default -f video4linux2 -i /dev/video0 "$1"
