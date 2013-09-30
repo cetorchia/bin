@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Scan all nodes on the network for SSH servers
+# Useful for when my IP address changes a work and I have
+# to find the new one. (and when my static IP settings do not work
+# for whatever reason.)
+#
+# (c) carlos torchia under GPL
+#
+
+[[ -z "$2" ]] && {
+    echo 'Usage:' $(basename "$0") '<NNN.NNN.NNN> <user> [ssh options]' >&2
+    exit 1
+}
+
+BASE="$1" ; shift
+USER="$1" ; shift
+
+for i in {1..255}; do
+    IP="$BASE.$i"
+    ping -c 1 "$IP" -W 1 && ssh -o ConnectTimeout=4 "$USER@$IP" $@
+done
