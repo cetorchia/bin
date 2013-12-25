@@ -1,6 +1,17 @@
 #!/bin/bash
 # Backup various files in home directory
 # @author ctorchia87
+#
+# Example config, ~/etc/bak.stuff.conf
+#   !/bin/bash
+#   BACKUP_DIR_ARRAY=("/backup/$USER" "/mnt/backup")
+#
+#   # E.g. $HOME/Documents gets put in /backup/$USER/documents.zip/Documents
+#   # and in /mnt/backup/documents.zip/Documents
+#   add_to_backup_list "documents" "Documents" "$HOME"
+#   add_to_backup_list "videos" "My Videos" "$HOME"
+#   add_to_backup_list "music" "My Music" "$HOME"
+ 
 
 function backup {
     ARCHIVE_NAME="$1"
