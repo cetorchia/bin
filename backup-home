@@ -2,50 +2,45 @@
 # Backup various files in home directory
 # @author ctorchia87
 
-function rootname {
-  echo "$1" | perl -ne '/^\/?([^\/]+)/ && print $1'
-}
-
 function backup {
-  BACKUP_DIR="$1"
-  shift
-  if [ -z "$BACKUP_DIR" ]; then
-    echo 'Need backup directory on line 1'
-    echo 'e.g. /backup/yourname'
-    exit 1
-  fi
+    ARCHIVE_NAME="$1"
+    FILE_TO_BACKUP="$2"
+    ARCHIVE_ROOT="$3"
 
-  HOME_DIR="$1"
-  shift
-  if [ -z "$HOME_DIR" ]; then
-    echo 'Need home directory on line 2'
-    echo 'e.g. /home/yourname'
-    exit 1
-  fi
+    echo \
+        name="${ARCHIVE_NAME}" \
+        file="${FILE_TO_BACKUP}" \
+        root="${ARCHIVE_ROOT}"
 
-  cd "$HOME_DIR"
-  echo "In $HOME_DIR"
+    cd "$ARCHIVE_ROOT"
 
-
-  while [ -n "$1" ]; do
-    DIR_TO_BACKUP="$1"
-    ARCHIVE_NAME=`rootname "$DIR_TO_BACKUP"`
-    ARCHIVE="$BACKUP_DIR/$ARCHIVE_NAME.zip"
-    echo "Backing up $DIR_TO_BACKUP to $ARCHIVE"
-    zip -r -u "$ARCHIVE" $DIR_TO_BACKUP
-    shift
-  done
+    for BACKUP_DIR in ${BACKUP_DIR_ARRAY[@]}; do
+        if [[ -d "$BACKUP_DIR" ]]; then
+            echo backup_dir="$BACKUP_DIR"
+            zip -r -u "$BACKUP_DIR/$ARCHIVE_NAME.zip" "$FILE_TO_BACKUP"
+        fi
+    done
 }
 
-function bring_etc {
-  if [ -x ~/etc/bring-etc.sh ]; then
-    ~/etc/bring-etc.sh
-  fi
+function add_to_backup_list {
+    ARCHIVE_NAME_ARRAY[${#ARCHIVE_NAME_ARRAY[@]}]="$1"
+    FILE_TO_BACKUP_ARRAY[${#FILE_TO_BACKUP_ARRAY[@]}]="$2"
+    ARCHIVE_ROOT_ARRAY[${#ARCHIVE_ROOT_ARRAY[@]}]="$3"
 }
 
-bring_etc
+for CONF in ~/etc/bak.*.conf; do
+    ARCHIVE_NAME_ARRAY=()
+    FILE_TO_BACKUP_ARRAY=()
+    ARCHIVE_ROOT_ARRAY=()
 
-for INF in ~/etc/*.bak.inf; do
-  echo "Reading $INF"
-  backup $(cat $INF)
+    # Conf provides backup file location and archive information used below
+    echo "Sourcing $CONF"
+    . "$CONF"
+
+    for i in $(seq 0 $((${#FILE_TO_BACKUP_ARRAY[@]}-1))); do
+        backup \
+            "${ARCHIVE_NAME_ARRAY[$i]}" \
+            "${FILE_TO_BACKUP_ARRAY[$i]}" \
+            "${ARCHIVE_ROOT_ARRAY[$i]}"
+    done
 done
