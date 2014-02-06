@@ -22,7 +22,7 @@ while [[ -n "$1" ]]; do
   fi
 
   # Convert this file
-  ffmpeg -qscale 2 -i "$INPUT" -target ntsc-dvd -acodec ac3 "$OUTPUT" >/dev/null 2>/dev/null && (
+  ffmpeg -i "$INPUT" -target ntsc-dvd -acodec ac3 -qscale 2 "$OUTPUT" >> convflv.sh.log 2>&1 && (
     echo '[success]'
     rm "$INPUT"
   ) || echo '[failed]'
