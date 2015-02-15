@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ -n "$1" ]; then
-	echo "Usage: wifi_down"
-	exit 1
-fi
-
-dhclient wlan0 -r -v
-ifdown wlan0

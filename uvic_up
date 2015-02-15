@@ -1,9 +1,0 @@
-#!/bin/sh
-#
-# Connect to UVic's secure wifi
-#
-
-iwconfig wlan0 essid UVic
-wpa_supplicant -BW -Dwext -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
-wpa_cli -B
-dhclient -v wlan0

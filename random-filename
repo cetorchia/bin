@@ -1,28 +1,28 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Selects a random directory from $1/
 # if $1 == "", then the current directory is taken, NOT the root.
 #
 
-DIRS=`ls $1`
+THIS="$(dirname "$0")"
+if [[ -z "$1" ]]; then
+    SAMPLE_DIR='.'
+else
+    SAMPLE_DIR="$1"
+fi
+DIRS="$(ls "${SAMPLE_DIR}")"
 
 #
-# Generate a pseudo-random number
+# Generate a pseudo-random number from 1 to the number of lines in $DIRS
 #
 
-# R=$RANDOM			# Sorry, but it's just not good enough!
-R=`date "+%s"`
-
-#
-# Generate a PRN from 1 to the number of lines in $DIRS
-#
-
-let "I = $R % $(echo "$DIRS" | ~/bin/count-lines)  "
+R=$(date "+%s")
+let "I = $R % $(echo "$DIRS" | wc -l)  "
 let "I = I + 1"
 
 #
 # Get the $Ith filename in $DIRS
 #
 
-echo -n "$1/"
-echo "$DIRS" | ~/bin/line-no $I
+echo -n "${SAMPLE_DIR}/"
+echo "${DIRS}" | perl "${THIS}"/line-no $I

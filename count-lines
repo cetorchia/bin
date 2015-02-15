@@ -1,9 +1,0 @@
-#!/usr/bin/perl
-#
-# Counts the number of lines in stdin
-#
-
-while($_=<STDIN>) {
-  $line_number++;
-}
-print "$line_number"

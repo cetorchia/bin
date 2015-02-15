@@ -1,8 +1,0 @@
-#!/bin/sh
-#
-# List wifi hotspots
-#
-
-ifup wlan0
-iwconfig wlan0
-iwlist wlan0 scan | egrep '(ESSID|Encryption\ key)\:'

@@ -1,8 +1,0 @@
-#!/bin/sh
-#
-# Picks a random feed from ~/.news, curls it to stdout
-# Carlos E. Torchia
-#
-
-URL=`/home/carlos/bin/random-line $HOME/.news`
-curl -s "$URL"
